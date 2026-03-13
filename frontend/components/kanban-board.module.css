@@ -1,0 +1,140 @@
+.container {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: var(--spacing-md);
+}
+
+.board {
+  display: flex;
+  gap: var(--spacing-lg);
+  height: calc(100vh - 14rem);
+  padding: var(--spacing-xs);
+  min-width: max-content;
+}
+
+@media (max-width: 768px) {
+  .board {
+    height: calc(100vh - 12rem);
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  min-width: 18rem;
+  height: 100%;
+  background-color: color-mix(in oklch, var(--secondary) 30%, transparent);
+  border: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  border-radius: var(--radius);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+@media (min-width: 768px) {
+  .column {
+    min-width: 20rem;
+  }
+}
+
+.columnDragOver {
+  border-color: color-mix(in oklch, var(--primary) 50%, transparent);
+  background-color: color-mix(in oklch, var(--primary) 5%, transparent);
+}
+
+.columnHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+}
+
+.columnIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: calc(var(--radius) - 2px);
+}
+
+.columnIconTodo {
+  background-color: var(--muted);
+}
+
+.columnIconInProgress {
+  background-color: color-mix(in oklch, var(--status-in-progress) 20%, transparent);
+}
+
+.columnIconDone {
+  background-color: color-mix(in oklch, var(--status-done) 20%, transparent);
+}
+
+.columnIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.columnIconTodo .columnIcon {
+  color: var(--muted-foreground);
+}
+
+.columnIconInProgress .columnIcon {
+  color: var(--status-in-progress);
+}
+
+.columnIconDone .columnIcon {
+  color: var(--status-done);
+}
+
+.columnTitle {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--foreground);
+  margin: 20px;
+}
+
+.columnCount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--spacing-sm);
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  color: var(--muted-foreground);
+  background-color: var(--muted);
+  border-radius: 9999px;
+}
+
+.columnContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-sm);
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.emptyColumn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6rem;
+  border: 1px dashed color-mix(in oklch, var(--border) 50%, transparent);
+  border-radius: var(--radius);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+}
+
+.draggableCard {
+  cursor: grab;
+}
+
+.draggableCard:active {
+  cursor: grabbing;
+}
+
