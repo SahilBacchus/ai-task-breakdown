@@ -1,0 +1,181 @@
+.container {
+  width: 100%;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.group {
+  border: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  border-radius: var(--radius);
+  background-color: color-mix(in oklch, var(--secondary) 30%, transparent);
+  overflow: hidden;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.groupDraggedOver {
+  border-color: var(--primary);
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  cursor: pointer;
+  user-select: none;
+}
+
+.groupIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: calc(var(--radius) - 2px);
+  flex-shrink: 0;
+}
+
+.iconTodo {
+  background-color: var(--muted);
+}
+.iconTodo svg {
+  color: var(--muted-foreground);
+}
+
+.iconInProgress {
+  background-color: color-mix(in oklch, var(--status-in-progress) 20%, transparent);
+}
+.iconInProgress svg {
+  color: var(--status-in-progress);
+}
+
+.iconDone {
+  background-color: color-mix(in oklch, var(--status-done) 20%, transparent);
+}
+.iconDone svg {
+  color: var(--status-done);
+}
+
+.groupTitle {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--foreground);
+  flex: 1;
+}
+
+.groupCount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--muted-foreground);
+  background-color: var(--muted);
+  border-radius: 9999px;
+}
+
+.groupChevron {
+  display: flex;
+  align-items: center;
+  color: var(--muted-foreground);
+  margin-left: var(--spacing-sm);
+}
+
+.groupBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.columnHeaders {
+  display: grid;
+  grid-template-columns: 1fr 100px 100px 110px 110px 40px;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  background-color: color-mix(in oklch, var(--secondary) 20%, transparent);
+}
+
+.colTask {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+}
+
+.colHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--transition-fast);
+}
+
+.colHeader:hover {
+  color: var(--foreground);
+}
+
+.sortIconInactive {
+  opacity: 0.4;
+}
+
+.sortIconActive {
+  color: var(--primary);
+}
+
+.row {
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  transition: background-color var(--transition-fast);
+}
+
+.row:active {
+  cursor: grabbing;
+  opacity: 0.8;
+}
+
+.row.dragging {
+  opacity: 0.5;
+  background-color: color-mix(in oklch, var(--secondary) 60%, transparent);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background-color: color-mix(in oklch, var(--secondary) 40%, transparent);
+}
+
+.emptyGroup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 6rem;
+  border: 1px dashed color-mix(in oklch, var(--border) 50%, transparent);
+  border-radius: var(--radius);
+  margin: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--muted-foreground);
+}
+
+.groupDraggedOver .emptyGroup {
+  border-color: var(--primary);
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+}
