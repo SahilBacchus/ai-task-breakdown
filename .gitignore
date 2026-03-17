@@ -1,0 +1,17 @@
+
+# Environments
+.venv
+venv/
+env/
+
+# Environement variables 
+.env*
+
+# Python cache
+__pycache__/
+*.pyc
+
+
+
+# Don't ignore these: 
+!.env.example
