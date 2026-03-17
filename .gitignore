@@ -11,3 +11,7 @@ env/
 __pycache__/
 *.pyc
 
+
+
+# Don't ignore these: 
+!.env.example
