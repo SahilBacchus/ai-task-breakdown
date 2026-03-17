@@ -105,9 +105,14 @@ interface StatusGroupProps {
   onSortChange: (field: SortField) => void
   onStatusChange: (taskId: string, status: TaskStatus) => void
   onDelete: (taskId: string) => void
+  onDragStart: (e: React.DragEvent, taskId: string) => void
+  onDragOver: (e: React.DragEvent, status: TaskStatus) => void
+  onDrop: (e: React.DragEvent, status: TaskStatus) => void
+  draggedOverStatus: TaskStatus | null
 }
 
 function StatusGroup({
+  status,
   title,
   icon,
   iconWrapperClass,
@@ -116,12 +121,22 @@ function StatusGroup({
   onSortChange,
   onStatusChange,
   onDelete,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  draggedOverStatus,
 }: StatusGroupProps) {
   const [collapsed, setCollapsed] = useState(false)
   const sorted = useMemo(() => sortTasks(tasks, sort), [tasks, sort])
 
+  const isDraggedOver = draggedOverStatus === status
+
   return (
-    <div className={styles.group}>
+    <div 
+      className={`${styles.group} ${isDraggedOver ? styles.groupDraggedOver : ''}`}
+      onDragOver={(e) => onDragOver(e, status)}
+      onDrop={(e) => onDrop(e, status)}
+    >
       {/* Group header */}
       <div className={styles.groupHeader} onClick={() => setCollapsed((c) => !c)}>
         <div className={`${styles.groupIcon} ${iconWrapperClass}`}>{icon}</div>
@@ -155,7 +170,13 @@ function StatusGroup({
             <div className={styles.emptyGroup}>No tasks in this group</div>
           ) : (
             sorted.map((task) => (
-              <div key={task.id} className={styles.row}>
+              <div 
+                key={task.id} 
+                className={styles.row}
+                draggable
+                onDragStart={(e) => onDragStart(e, task.id)}
+                onDragOver={(e) => e.preventDefault()}
+              >
                 <TaskCard
                   task={task}
                   onStatusChange={onStatusChange}
@@ -173,6 +194,8 @@ function StatusGroup({
 
 export function ListView({ tasks, onTaskUpdate, onTaskDelete }: ListViewProps) {
   const [sort, setSort] = useState<SortState>({ field: 'createdAt', direction: 'asc' })
+  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null)
+  const [draggedOverStatus, setDraggedOverStatus] = useState<TaskStatus | null>(null)
 
   const handleSortChange = (field: SortField) => {
     setSort((prev) =>
@@ -187,8 +210,43 @@ export function ListView({ tasks, onTaskUpdate, onTaskDelete }: ListViewProps) {
     onTaskUpdate(updated)
   }
 
+  const handleDragStart = (e: React.DragEvent, taskId: string) => {
+    setDraggedTaskId(taskId)
+    e.dataTransfer.setData('text/plain', taskId)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleDragOver = (e: React.DragEvent, status: TaskStatus) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDraggedOverStatus(status)
+  }
+
+  const handleDrop = (e: React.DragEvent, targetStatus: TaskStatus) => {
+    e.preventDefault()
+    
+    const taskId = e.dataTransfer.getData('text/plain')
+    setDraggedOverStatus(null)
+    setDraggedTaskId(null)
+
+    if (!taskId) return
+
+    const task = tasks.find(t => t.id === taskId)
+    if (!task) return
+
+    // Only update if the status is actually changing
+    if (task.status !== targetStatus) {
+      handleStatusChange(taskId, targetStatus)
+    }
+  }
+
+  const handleDragEnd = () => {
+    setDraggedOverStatus(null)
+    setDraggedTaskId(null)
+  }
+
   return (
-    <div className={styles.container}>
+    <div className={styles.container} onDragEnd={handleDragEnd}>
       {STATUS_CONFIG.map(({ status, title, icon, iconWrapperClass }) => (
         <StatusGroup
           key={status}
@@ -201,6 +259,10 @@ export function ListView({ tasks, onTaskUpdate, onTaskDelete }: ListViewProps) {
           onSortChange={handleSortChange}
           onStatusChange={handleStatusChange}
           onDelete={onTaskDelete}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          draggedOverStatus={draggedOverStatus}
         />
       ))}
     </div>

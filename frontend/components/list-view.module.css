@@ -14,6 +14,14 @@
   transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
+.groupDraggedOver {
+  border-color: var(--primary);
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
 .groupHeader {
   display: flex;
   align-items: center;
@@ -137,6 +145,16 @@
   transition: background-color var(--transition-fast);
 }
 
+.row:active {
+  cursor: grabbing;
+  opacity: 0.8;
+}
+
+.row.dragging {
+  opacity: 0.5;
+  background-color: color-mix(in oklch, var(--secondary) 60%, transparent);
+}
+
 .row:last-child {
   border-bottom: none;
 }
@@ -155,4 +173,9 @@
   margin: var(--spacing-sm);
   font-size: var(--font-size-sm);
   color: var(--muted-foreground);
+}
+
+.groupDraggedOver .emptyGroup {
+  border-color: var(--primary);
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
 }
