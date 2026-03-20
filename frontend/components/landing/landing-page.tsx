@@ -1,4 +1,4 @@
-// components/landing/LandingPage.tsx (unchanged, just ensure it matches)
+// components/landing/LandingPage.tsx
 import Link from 'next/link';
 import { ArrowRight, Sparkles, LayoutGrid, MessageSquare, CheckCircle2 } from 'lucide-react';
 import styles from './landing.module.css';

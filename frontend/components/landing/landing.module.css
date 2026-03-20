@@ -232,7 +232,7 @@
   /* bg-gradient-to-r from-[oklch(...)] to-[oklch(...)] */
   background-image: linear-gradient(
     to right, 
-    --landing-primary, 
+    oklch(0.65 0.2 275), 
     oklch(0.85 0.1 275)
   );
 
