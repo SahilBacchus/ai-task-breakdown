@@ -5,7 +5,7 @@ import { Sparkles, ArrowRight, Lightbulb, LayoutGrid, MessageSquare } from 'luci
 import styles from './project-input.module.css'
 
 interface ProjectInputProps {
-  onSubmit: (description: string) => void
+  onSubmit: (title: string, description: string) => void
 }
 
 const exampleProjects = [
@@ -32,11 +32,12 @@ const exampleProjects = [
 ]
 
 export function ProjectInput({ onSubmit }: ProjectInputProps) {
+  const [projectTitle, setProjectTitle] = useState('')
   const [description, setDescription] = useState('')
 
   const handleSubmit = () => {
-    if (description.trim().length >= 20) {
-      onSubmit(description.trim())
+    if (projectTitle.trim() && description.trim().length >= 20) {
+      onSubmit(projectTitle.trim(), description.trim())
     }
   }
 
@@ -44,7 +45,7 @@ export function ProjectInput({ onSubmit }: ProjectInputProps) {
     setDescription(fullDescription)
   }
 
-  const isValid = description.trim().length >= 20
+  const isValid = projectTitle.trim() && description.trim().length >= 20
 
   return (
     <div className={styles.container}>
@@ -60,20 +61,36 @@ export function ProjectInput({ onSubmit }: ProjectInputProps) {
         </header>
 
         <div className={styles.card}>
-          <label htmlFor="project-description" className={styles.label}>
-            Describe your project
-          </label>
-          <textarea
-            id="project-description"
-            className={styles.textarea}
-            placeholder="Describe your project in detail. Include features, functionality, and any specific requirements you have in mind..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            maxLength={2000}
-          />
-          <span className={styles.charCount}>
-            {description.length} / 2000 characters (minimum 20)
-          </span>
+          <div className={styles.inputGroup}>
+            <label htmlFor="project-title" className={styles.label}>
+              Project Title
+            </label>
+            <input
+              id="project-title"
+              type="text"
+              className={styles.input}
+              placeholder="e.g., My E-commerce App"
+              value={projectTitle}
+              onChange={(e) => setProjectTitle(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label htmlFor="project-description" className={styles.label}>
+              Project Description
+            </label>
+            <textarea
+              id="project-description"
+              className={styles.textarea}
+              placeholder="Describe your project in detail. Include features, functionality, and any specific requirements you have in mind..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              maxLength={2000}
+            />
+            <span className={styles.charCount}>
+              {description.length} / 2000 characters (minimum 20)
+            </span>
+          </div>
 
           <div className={styles.buttonWrapper}>
             <button
@@ -94,7 +111,10 @@ export function ProjectInput({ onSubmit }: ProjectInputProps) {
               <button
                 key={example.title}
                 className={styles.exampleButton}
-                onClick={() => handleExampleClick(example.fullDescription)}
+                onClick={() => {
+                  setProjectTitle(example.title)
+                  handleExampleClick(example.fullDescription)
+                }}
               >
                 <Lightbulb className={styles.exampleIcon} />
                 <div className={styles.exampleContent}>

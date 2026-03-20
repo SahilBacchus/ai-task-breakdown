@@ -270,3 +270,29 @@
   font-size: var(--font-size-xs);
   color: var(--muted-foreground);
 }
+
+.inputGroup {
+  margin-bottom: var(--spacing-lg);
+}
+
+.input {
+  width: 100%;
+  padding: var(--spacing-md);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  color: var(--foreground);
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--ring);
+}
