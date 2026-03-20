@@ -1,14 +1,14 @@
 .container {
   width: 100%;
   overflow-x: auto;
-  padding-bottom: var(--spacing-md);
+  padding-bottom: 1rem;
 }
 
 .board {
   display: flex;
-  gap: var(--spacing-lg);
+  gap: 1.5rem;
   height: calc(100vh - 14rem);
-  padding: var(--spacing-xs);
+  padding: 0.25rem;
   min-width: max-content;
 }
 
@@ -23,10 +23,10 @@
   flex-direction: column;
   min-width: 18rem;
   height: 100%;
-  background-color: color-mix(in oklch, var(--secondary) 30%, transparent);
-  border: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
-  border-radius: var(--radius);
-  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 @media (min-width: 768px) {
@@ -36,16 +36,16 @@
 }
 
 .columnDragOver {
-  border-color: color-mix(in oklch, var(--primary) 50%, transparent);
-  background-color: color-mix(in oklch, var(--primary) 5%, transparent);
+  border-color: var(--primary);
+  background-color: color-mix(in oklch, var(--primary) 10%, transparent);
 }
 
 .columnHeader {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  border-bottom: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+  gap: 0.5rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .columnIconWrapper {
@@ -54,7 +54,7 @@
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
-  border-radius: calc(var(--radius) - 2px);
+  border-radius: calc(0.5rem - 2px);
 }
 
 .columnIconTodo {
@@ -87,10 +87,10 @@
 }
 
 .columnTitle {
-  font-size: var(--font-size-base);
+  font-size: 1rem;
   font-weight: 500;
   color: var(--foreground);
-  margin: 20px;
+  margin: 0;
 }
 
 .columnCount {
@@ -99,9 +99,9 @@
   justify-content: center;
   min-width: 1.25rem;
   height: 1.25rem;
-  padding: 0 var(--spacing-sm);
+  padding: 0 0.5rem;
   margin-left: auto;
-  font-size: var(--font-size-xs);
+  font-size: 0.75rem;
   color: var(--muted-foreground);
   background-color: var(--muted);
   border-radius: 9999px;
@@ -110,13 +110,13 @@
 .columnContent {
   flex: 1;
   overflow-y: auto;
-  padding: var(--spacing-sm);
+  padding: 0.5rem;
 }
 
 .taskList {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 0.5rem;
 }
 
 .emptyColumn {
@@ -124,9 +124,9 @@
   align-items: center;
   justify-content: center;
   height: 6rem;
-  border: 1px dashed color-mix(in oklch, var(--border) 50%, transparent);
-  border-radius: var(--radius);
-  font-size: var(--font-size-sm);
+  border: 1px dashed var(--border);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
   color: var(--muted-foreground);
 }
 
@@ -137,4 +137,3 @@
 .draggableCard:active {
   cursor: grabbing;
 }
-
