@@ -1,11 +1,13 @@
+// components/project-input.tsx
 'use client'
 
 import { useState } from 'react'
-import { Sparkles, ArrowRight, Lightbulb, LayoutGrid, MessageSquare } from 'lucide-react'
+import { Sparkles, ArrowRight, Lightbulb } from 'lucide-react'
 import styles from './project-input.module.css'
 
 interface ProjectInputProps {
   onSubmit: (title: string, description: string) => void
+  disabled?: boolean
 }
 
 const exampleProjects = [
@@ -31,17 +33,19 @@ const exampleProjects = [
   },
 ]
 
-export function ProjectInput({ onSubmit }: ProjectInputProps) {
+export function ProjectInput({ onSubmit, disabled = false }: ProjectInputProps) {
   const [projectTitle, setProjectTitle] = useState('')
   const [description, setDescription] = useState('')
 
   const handleSubmit = () => {
+    if (disabled) return
     if (projectTitle.trim() && description.trim().length >= 20) {
       onSubmit(projectTitle.trim(), description.trim())
     }
   }
 
-  const handleExampleClick = (fullDescription: string) => {
+  const handleExampleClick = (title: string, fullDescription: string) => {
+    setProjectTitle(title)
     setDescription(fullDescription)
   }
 
@@ -72,6 +76,7 @@ export function ProjectInput({ onSubmit }: ProjectInputProps) {
               placeholder="e.g., My E-commerce App"
               value={projectTitle}
               onChange={(e) => setProjectTitle(e.target.value)}
+              disabled={disabled}
             />
           </div>
 
@@ -86,6 +91,7 @@ export function ProjectInput({ onSubmit }: ProjectInputProps) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               maxLength={2000}
+              disabled={disabled}
             />
             <span className={styles.charCount}>
               {description.length} / 2000 characters (minimum 20)
@@ -96,9 +102,9 @@ export function ProjectInput({ onSubmit }: ProjectInputProps) {
             <button
               className={styles.submitButton}
               onClick={handleSubmit}
-              disabled={!isValid}
+              disabled={!isValid || disabled}
             >
-              Generate Tasks
+              {disabled ? 'Generating...' : 'Generate Tasks'}
               <ArrowRight className={styles.buttonIcon} />
             </button>
           </div>
@@ -111,10 +117,8 @@ export function ProjectInput({ onSubmit }: ProjectInputProps) {
               <button
                 key={example.title}
                 className={styles.exampleButton}
-                onClick={() => {
-                  setProjectTitle(example.title)
-                  handleExampleClick(example.fullDescription)
-                }}
+                onClick={() => handleExampleClick(example.title, example.fullDescription)}
+                disabled={disabled}
               >
                 <Lightbulb className={styles.exampleIcon} />
                 <div className={styles.exampleContent}>

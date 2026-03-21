@@ -19,8 +19,15 @@ import { ListView } from '@/components/list-view';
 import { ChatInterface } from '@/components/chat-interface';
 import { Task, ChatMessage } from '@/lib/types';
 
-// Mock data – replace with real API calls later
-const INITIAL_PROJECTS = [
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  tasks: Task[];
+};
+
+// Ensure we have at least one initial project, or fallback to empty array
+const INITIAL_PROJECTS: Project[] = [
   {
     id: '1',
     title: 'ENSF 400 Project',
@@ -29,8 +36,8 @@ const INITIAL_PROJECTS = [
       {
         id: 't1',
         title: 'Design Database Schema',
-        status: 'done' as const,
-        priority: 'high' as const,
+        status: 'done',
+        priority: 'high',
         description: 'Create Schema for Users, Projects, Tasks',
         estimatedTime: '2h',
         createdAt: new Date(),
@@ -38,8 +45,8 @@ const INITIAL_PROJECTS = [
       {
         id: 't2',
         title: 'Implement Authentication',
-        status: 'in-progress' as const,
-        priority: 'high' as const,
+        status: 'in-progress',
+        priority: 'high',
         description: 'Integrate Supabase Auth for login',
         estimatedTime: '4h',
         createdAt: new Date(),
@@ -47,8 +54,8 @@ const INITIAL_PROJECTS = [
       {
         id: 't3',
         title: 'Setup Dev Environment',
-        status: 'done' as const,
-        priority: 'medium' as const,
+        status: 'done',
+        priority: 'medium',
         description: 'npm install and environment variables',
         estimatedTime: '1h',
         createdAt: new Date(),
@@ -63,8 +70,8 @@ const INITIAL_PROJECTS = [
       {
         id: 't4',
         title: 'Draft Architecture Diagram',
-        status: 'todo' as const,
-        priority: 'high' as const,
+        status: 'todo',
+        priority: 'high',
         description: 'C4 model for the new system',
         estimatedTime: '3h',
         createdAt: new Date(),
@@ -76,18 +83,20 @@ const INITIAL_PROJECTS = [
 type ViewMode = 'kanban' | 'list';
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState(INITIAL_PROJECTS);
+  const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
+  // If there are no projects, activeProjectId stays null
   const [activeProjectId, setActiveProjectId] = useState<string | null>(
-    INITIAL_PROJECTS[0].id // open the first project by default
+    INITIAL_PROJECTS.length > 0 ? INITIAL_PROJECTS[0].id : null
   );
-
   const [viewMode, setViewMode] = useState<ViewMode>('kanban');
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
+
   const activeProject = projects.find((p) => p.id === activeProjectId);
 
-  // Handlers for task updates
   const handleTaskUpdate = (updatedTasks: Task[]) => {
     setProjects((prev) =>
       prev.map((p) =>
@@ -106,16 +115,50 @@ export default function ProjectsPage() {
     );
   };
 
-  // Handler for creating a new project
-  const handleCreateProject = (title: string, description: string) => {
-    const newProject = {
-      id: Date.now().toString(),
-      title,
-      description,
-      tasks: [] as Task[], // In a real app, call LLM to generate tasks
-    };
-    setProjects((prev) => [...prev, newProject]);
-    setActiveProjectId(newProject.id);
+  const handleCreateProject = async (title: string, description: string) => {
+    setIsGenerating(true);
+    setGenerationError(null);
+
+    try {
+      const res = await fetch('http://localhost:8000/generate-tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.detail || `API error: ${res.status}`);
+      }
+
+      const data = await res.json();
+      const aiTasks = data.tasks || [];
+
+      const tasks: Task[] = aiTasks.map((t: any, idx: number) => ({
+        id: `${Date.now()}-${idx}`,
+        title: t.title,
+        description: t.description || '',
+        priority: (t.priority?.toLowerCase() as 'high' | 'medium' | 'low') || 'medium',
+        estimatedTime: t.estimatedTime || undefined,
+        status: 'todo',
+        createdAt: new Date(),
+      }));
+
+      const newProject: Project = {
+        id: Date.now().toString(),
+        title,
+        description,
+        tasks,
+      };
+
+      setProjects((prev) => [...prev, newProject]);
+      setActiveProjectId(newProject.id);
+    } catch (err: any) {
+      console.error(err);
+      setGenerationError(err.message || 'Failed to generate tasks. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -127,9 +170,7 @@ export default function ProjectsPage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[oklch(0.65_0.2_275)] shadow-sm">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="text-sm font-bold tracking-tight">
-            AI Task Breakdown
-          </span>
+          <span className="text-sm font-bold tracking-tight">AI Task Breakdown</span>
         </div>
 
         {/* Projects list */}
@@ -186,7 +227,12 @@ export default function ProjectsPage() {
         {/* Show ProjectInput when no project is selected */}
         {activeProjectId === null ? (
           <div className="flex-1 overflow-y-auto">
-            <ProjectInput onSubmit={handleCreateProject} />
+            {generationError && (
+              <div className="mx-auto max-w-2xl mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                {generationError}
+              </div>
+            )}
+            <ProjectInput onSubmit={handleCreateProject} disabled={isGenerating} />
           </div>
         ) : activeProject ? (
           // Active project dashboard
