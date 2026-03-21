@@ -8,9 +8,12 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import create_client, Client
+import logging
 
 # Setup & Config
 load_dotenv()
+logging.basicConfig(level=logging.INFO)
+logging.info("Application initialized")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 SUPABASE_URL = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("NEXT_PUBLIC_SUPABASE_ANON_KEY")
