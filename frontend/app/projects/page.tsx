@@ -165,8 +165,8 @@ export default function ProjectsPage() {
   // 5. Create new project
   const handleCreateProject = async (title: string, description: string) => {
     try {
-      const generatedTasks = await generateTasks(description);
-      const newProjectData = {
+        const generatedTasks = await generateTasks(title, description);      
+        const newProjectData = {
         title,
         description,
         status: 'active',

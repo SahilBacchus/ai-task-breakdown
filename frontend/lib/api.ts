@@ -33,10 +33,11 @@ export async function fetchProjectTasks(projectId: string) {
   return data.tasks;
 }
 
-export async function generateTasks(description: string) {
+
+export async function generateTasks(title: string, description: string) {
   const data = await fetchWithAuth('/generate-tasks', {
     method: 'POST',
-    body: JSON.stringify({ description }),
+    body: JSON.stringify({ title, description }),
   });
   return data.tasks;
 }
