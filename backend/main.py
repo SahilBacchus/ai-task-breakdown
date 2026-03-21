@@ -35,8 +35,10 @@ app.add_middleware(
 )
 
 # Data Models
-class ProjectDescription(BaseModel):
+class ProjectInput(BaseModel):
+    title: str
     description: str
+
 
 # Dependency to get authenticated Supabase client using the user's token
 async def get_authenticated_supabase(authorization: str = Header(None)):
@@ -82,31 +84,62 @@ async def get_user_projects(user_id: str, supabase: Client = Depends(get_authent
 
 # Task Generation Endpoint
 @app.post("/generate-tasks")
-async def generate_tasks(project: ProjectDescription):
-    prompt = f"""
-    Break down the following project description into a list of specific, actionable tasks.
-    Return the result strictly as a valid JSON array of objects.
-    Each object must have the keys: "title", "description", and "priority" (High, Medium, or Low).
-    
-    Project Description: {project.description}
+async def generate_tasks(project: ProjectInput):
     """
+    Breaks down the given project title + description into a list of actionable tasks.
+    Returns a JSON array of tasks, each with:
+      - title (string)
+      - description (string)
+      - priority (string: "High", "Medium", or "Low")
+      - estimatedTime (string, e.g., "1h", "30m", "2d")
+    """
+    prompt = f"""
+            You are an AI task breakdown assistant. Given a project title and description, generate a detailed list of specific, actionable tasks.
+
+            Project title: {project.title}
+            Project description: {project.description}
+
+            Return a JSON array of objects. Each object must have exactly these keys:
+            - "title": a short, clear task name
+            - "description": a brief explanation of what needs to be done
+            - "priority": one of "High", "Medium", or "Low"
+            - "estimatedTime": a time estimate in human-readable format (e.g., "30m", "2h", "1d")
+
+            Make sure the tasks cover all the main features of the project. Order them logically if possible.
+            Output ONLY the JSON array, without any extra text or formatting.
+            """
 
     try:
         response = model.generate_content(prompt)
         text = response.text.strip()
-        
+
+        # Remove markdown code fences if present
         if text.startswith("```json"):
             text = text[7:-3]
         elif text.startswith("```"):
             text = text[3:-3]
-            
+        text = text.strip()
+
+        # Try to parse JSON; if it fails, attempt to extract the first valid JSON array
         tasks = json.loads(text)
+        if not isinstance(tasks, list):
+            raise ValueError("AI did not return a JSON array")
+
+        # Validate each task has required fields
+        for task in tasks:
+            if not all(k in task for k in ("title", "description", "priority")):
+                raise ValueError("Missing required field in task")
+
         return {"tasks": tasks}
-        
-    except json.JSONDecodeError:
+
+    except json.JSONDecodeError as e:
+        # Log the raw output for debugging
+        print("Raw AI output:", response.text)
         raise HTTPException(status_code=500, detail="AI returned invalid JSON format")
     except Exception as e:
+        print("Error:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
+
     
 
 
@@ -472,8 +505,6 @@ Be precise with task IDs. Use only the IDs from the provided list.
     except Exception as e:
         logging.exception("Chat error")
         raise HTTPException(status_code=500, detail=str(e))
-
-
 
 
 
