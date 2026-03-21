@@ -1,95 +1,100 @@
-'use client'
+'use client';
 
-import { useState, useRef, useEffect } from 'react'
-import { Task, ChatMessage } from '@/lib/types'
-import { processChatMessage, generateId } from '@/lib/mock-llm'
-import { X, Send, Bot, User, Loader2 } from 'lucide-react'
-import styles from './chat-interface.module.css'
-
+import { useState, useRef, useEffect } from 'react';
+import { Task, ChatMessage } from '@/lib/types';
+import { X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { sendChatMessage } from '@/lib/api';
+import styles from './chat-interface.module.css';
 
 interface ChatInterfaceProps {
-  messages: ChatMessage[]
-  tasks: Task[]
-  onMessagesUpdate: (messages: ChatMessage[]) => void
-  onTasksUpdate: (tasks: Task[]) => void
-  onClose: () => void
+  messages: ChatMessage[];
+  tasks: Task[];
+  projectId: string;
+  onMessagesUpdate: (messages: ChatMessage[]) => void;
+  onTasksUpdate: (tasks: Task[]) => void;
+  onClose: () => void;
 }
 
 export function ChatInterface({
   messages,
   tasks,
+  projectId,
   onMessagesUpdate,
   onTasksUpdate,
   onClose,
 }: ChatInterfaceProps) {
-  const [input, setInput] = useState('')
-  const [isProcessing, setIsProcessing] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const [input, setInput] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages])
+  }, [messages]);
 
   useEffect(() => {
-    inputRef.current?.focus()
-  }, [])
+    inputRef.current?.focus();
+  }, []);
 
   const handleSend = async () => {
-    if (!input.trim() || isProcessing) return
+    if (!input.trim() || isProcessing) return;
 
     const userMessage: ChatMessage = {
-      id: generateId(),
+      id: Date.now().toString(),
       role: 'user',
       content: input.trim(),
       timestamp: new Date(),
-    }
+    };
 
-    const updatedMessages = [...messages, userMessage]
-    onMessagesUpdate(updatedMessages)
-    setInput('')
-    setIsProcessing(true)
+    const updatedMessages = [...messages, userMessage];
+    onMessagesUpdate(updatedMessages);
+    setInput('');
+    setIsProcessing(true);
 
     try {
-      const { response, updatedTasks, newTask } = await processChatMessage(
-        input,
-        tasks
-      )
+      const result = await sendChatMessage(projectId, userMessage.content);
 
-      if (newTask) {
-        onTasksUpdate([...updatedTasks, newTask])
-      } else {
-        onTasksUpdate(updatedTasks)
-      }
+      // Update tasks from backend response
+      const formattedTasks: Task[] = result.tasks.map((t: any) => ({
+        id: t.id,
+        title: t.title,
+        description: t.description,
+        status: t.status,
+        priority: t.priority,
+        estimatedTime: t.estimated_time,
+        createdAt: new Date(t.created_at),
+      }));
+      onTasksUpdate(formattedTasks);
 
       const assistantMessage: ChatMessage = {
-        id: generateId(),
+        id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: response,
+        content: result.response,
         timestamp: new Date(),
-      }
-      onMessagesUpdate([...updatedMessages, assistantMessage])
-    } catch {
+      };
+      onMessagesUpdate([...updatedMessages, assistantMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
       const errorMessage: ChatMessage = {
-        id: generateId(),
+        id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date(),
-      }
-      onMessagesUpdate([...updatedMessages, errorMessage])
+      };
+      onMessagesUpdate([...updatedMessages, errorMessage]);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+      e.preventDefault();
+      handleSend();
     }
-  }
+  };
 
   return (
     <div className={styles.container}>
@@ -180,15 +185,15 @@ export function ChatInterface({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 interface ChatBubbleProps {
-  message: ChatMessage
+  message: ChatMessage;
 }
 
 function ChatBubble({ message }: ChatBubbleProps) {
-  const isUser = message.role === 'user'
+  const isUser = message.role === 'user';
 
   return (
     <div className={`${styles.bubble} ${isUser ? styles.bubbleUser : ''}`}>
@@ -219,5 +224,5 @@ function ChatBubble({ message }: ChatBubbleProps) {
         </p>
       </div>
     </div>
-  )
+  );
 }
