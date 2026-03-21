@@ -111,13 +111,14 @@ export default function KanbanPage() {
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
             border: '1px solid #e5e7eb',
           }}>
-            <ChatInterface
-              messages={chatMessages}
-              tasks={tasks}
-              onMessagesUpdate={setChatMessages}
-              onTasksUpdate={setTasks}
-              onClose={() => setIsChatOpen(false)}
-            />
+          <ChatInterface
+            messages={chatMessages}
+            tasks={activeProject.tasks || []}
+            projectId={activeProjectId}   // <-- add this
+            onMessagesUpdate={setChatMessages}
+            onTasksUpdate={handleTaskUpdate}
+            onClose={() => setIsChatOpen(false)}
+          />
           </div>
         )}
       </div>
