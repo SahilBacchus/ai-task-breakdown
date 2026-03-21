@@ -43,7 +43,7 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/kanban");
+      router.push("/projects");
       router.refresh();
     } finally {
       setLoading(false);
