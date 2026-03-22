@@ -57,7 +57,7 @@ export default function SignupPage() {
           return;
         }
 
-        router.push("/kanban");
+        router.push("/projects");
         router.refresh();
         return;
       }
