@@ -296,7 +296,7 @@ export default function ProjectsPage() {
               <div key={project.id} className="flex items-center justify-between relative">
                 <button
                   onClick={() => setActiveProjectId(project.id)}
-                  className={`flex flex-1 items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors ${
+                  className={`flex flex-1 items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors min-w-0 ${
                     activeProjectId === project.id
                       ? 'bg-[oklch(0.65_0.2_275/0.15)] text-[oklch(0.65_0.2_275)]'
                       : 'text-[oklch(0.65_0_0)] hover:bg-[oklch(0.22_0.005_285)] hover:text-[oklch(0.98_0_0)]'
@@ -377,16 +377,16 @@ export default function ProjectsPage() {
                     </button>
                   )}
                 </div>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
                 <button
                   onClick={handleExportActiveProjectCsv}
                   disabled={isLoadingTasks}
-                  className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)] px-3 py-1.5 text-sm font-medium text-[oklch(0.65_0_0)] transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)] px-3 py-1.5 text-sm font-medium text-[oklch(0.65_0_0)] transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Download size={16} />
-                  Export Project CSV
+                  Export CSV
                 </button>
-              </div>
-              <div className="flex items-center gap-3">
                 <div className="flex overflow-hidden rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)]">
                   <button
                     onClick={() => setViewMode('kanban')}
