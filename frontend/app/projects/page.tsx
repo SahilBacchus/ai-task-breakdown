@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2 } from 'lucide-react';
-import Link from 'next/link';
+import { Download, Trash2 } from 'lucide-react';
 import {
   LayoutGrid,
   List,
@@ -29,6 +28,7 @@ import {
   deleteTask,
   deleteProject,
 } from '@/lib/api';
+import { buildCsv, downloadCsv, sanitizeCsvFilename } from '@/lib/csv';
 
 type ViewMode = 'kanban' | 'list';
 
@@ -52,6 +52,22 @@ export default function ProjectsPage() {
 
   const activeProject = projects.find((p) => p.id === activeProjectId);
   const currentChatMessages = activeProjectId ? (chatMessagesMap[activeProjectId] || []) : [];
+
+  const handleExportActiveProjectCsv = () => {
+    if (!activeProject) return;
+
+    const csvHeaders = ['priority', 'title', 'description', 'status'];
+    const csvRows = (activeProject.tasks || []).map((task) => [
+      task.priority,
+      task.title,
+      task.description || '',
+      task.status,
+    ]);
+
+    const csvContent = buildCsv(csvHeaders, csvRows);
+    const filename = `${sanitizeCsvFilename(activeProject.title)}-tasks.csv`;
+    downloadCsv(filename, csvContent);
+  };
 
   // 1. Check authentication and load projects
   useEffect(() => {
@@ -308,11 +324,19 @@ export default function ProjectsPage() {
         ) : activeProject ? (
           <div className="flex h-full flex-col p-6">
             <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
+              <div className="min-w-0">
                 <h1 className="text-2xl font-bold">{activeProject.title}</h1>
                 <p className="text-sm text-[oklch(0.65_0_0)]">
                   {activeProject.description}
                 </p>
+                <button
+                  onClick={handleExportActiveProjectCsv}
+                  disabled={isLoadingTasks}
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)] px-3 py-1.5 text-sm font-medium text-[oklch(0.65_0_0)] transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <Download size={16} />
+                  Export Project CSV
+                </button>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex overflow-hidden rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)]">

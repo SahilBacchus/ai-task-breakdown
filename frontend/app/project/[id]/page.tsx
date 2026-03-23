@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { useParams, useRouter } from "next/navigation";
+import { Download } from "lucide-react";
+import { buildCsv, downloadCsv, sanitizeCsvFilename } from "@/lib/csv";
 
 interface Project {
   id: string;
@@ -88,6 +90,19 @@ export default function ProjectPage() {
     }
   };
 
+  const handleExportCsv = () => {
+    const csvHeaders = ["priority", "title", "description", "status"];
+    const csvRows = tasks.map((task) => [
+      task.priority,
+      task.title,
+      task.description ?? "",
+      task.status,
+    ]);
+    const csvContent = buildCsv(csvHeaders, csvRows);
+    const filename = `${sanitizeCsvFilename(project?.title || "project")}-tasks.csv`;
+    downloadCsv(filename, csvContent);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -131,7 +146,16 @@ export default function ProjectPage() {
         
         {/* Tasks Section */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-semibold mb-4">Tasks</h2>
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-2xl font-semibold">Tasks</h2>
+            <button
+              onClick={handleExportCsv}
+              className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </button>
+          </div>
           
           {tasks.length === 0 ? (
             <p className="text-gray-500 text-center py-8">No tasks yet for this project.</p>
