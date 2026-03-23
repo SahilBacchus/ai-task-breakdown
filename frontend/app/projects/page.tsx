@@ -377,16 +377,16 @@ export default function ProjectsPage() {
                     </button>
                   )}
                 </div>
-              </div>
-              <div className="flex items-center gap-3 flex-wrap">
                 <button
                   onClick={handleExportActiveProjectCsv}
                   disabled={isLoadingTasks}
-                  className="inline-flex items-center gap-2 rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)] px-3 py-1.5 text-sm font-medium text-[oklch(0.65_0_0)] transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="mt-3 inline-flex items-center gap-2 rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)] px-3 py-1.5 text-sm font-medium text-[oklch(0.65_0_0)] transition-colors hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <Download size={16} />
-                  Export CSV
+                  Export Project CSV
                 </button>
+              </div>
+              <div className="flex items-center gap-3">
                 <div className="flex overflow-hidden rounded-lg border border-[oklch(0.28_0.005_285)] bg-[oklch(0.17_0.005_285)]">
                   <button
                     onClick={() => setViewMode('kanban')}
