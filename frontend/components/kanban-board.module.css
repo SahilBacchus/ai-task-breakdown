@@ -5,11 +5,12 @@
 }
 
 .board {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 1fr);  /* min 200px, grow equally */
   gap: 1.5rem;
   height: calc(100vh - 14rem);
   padding: 0.25rem;
-  min-width: max-content;
 }
 
 @media (max-width: 768px) {
@@ -21,17 +22,17 @@
 .column {
   display: flex;
   flex-direction: column;
-  min-width: 18rem;
   height: 100%;
   background-color: var(--secondary);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   transition: border-color 0.15s ease, background-color 0.15s ease;
+  overflow-y: hidden;
 }
 
 @media (min-width: 768px) {
   .column {
-    min-width: 20rem;
+    /* min-width: 20rem; */
   }
 }
 
