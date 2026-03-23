@@ -4,6 +4,7 @@
   --secondary: #1a1a1f;
   --muted: #26262d;
   --muted-foreground: #8b8b99;
+  --foreground: #ffffff; 
   --border: #2e2e38;
   --destructive: #f87171;
   --radius: 0.625rem;
