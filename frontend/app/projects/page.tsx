@@ -52,6 +52,7 @@ export default function ProjectsPage() {
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const activeProject = projects.find((p) => p.id === activeProjectId);
   const currentChatMessages = activeProjectId ? (chatMessagesMap[activeProjectId] || []) : [];
@@ -295,7 +296,7 @@ export default function ProjectsPage() {
               <div key={project.id} className="flex items-center justify-between relative">
                 <button
                   onClick={() => setActiveProjectId(project.id)}
-                  className={`flex flex-1 items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors ${
+                  className={`flex flex-1 items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors min-w-0 ${
                     activeProjectId === project.id
                       ? 'bg-[oklch(0.65_0.2_275/0.15)] text-[oklch(0.65_0.2_275)]'
                       : 'text-[oklch(0.65_0_0)] hover:bg-[oklch(0.22_0.005_285)] hover:text-[oklch(0.98_0_0)]'
@@ -359,9 +360,23 @@ export default function ProjectsPage() {
             <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <h1 className="text-2xl font-bold">{activeProject.title}</h1>
-                <p className="text-sm text-[oklch(0.65_0_0)]">
-                  {activeProject.description}
-                </p>
+                <div className="mt-1">
+                  <div
+                    className={`text-sm text-[oklch(0.65_0_0)] whitespace-pre-wrap ${
+                      !isDescriptionExpanded ? 'line-clamp-1' : ''
+                    }`}
+                  >
+                    {activeProject.description}
+                  </div>
+                  {activeProject.description && activeProject.description.length > 100 && (
+                    <button
+                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                      className="mt-1 text-xs text-[oklch(0.65_0.2_275)] hover:underline"
+                    >
+                      {isDescriptionExpanded ? 'Show less' : 'Show more'}
+                    </button>
+                  )}
+                </div>
                 <button
                   onClick={handleExportActiveProjectCsv}
                   disabled={isLoadingTasks}

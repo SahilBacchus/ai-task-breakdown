@@ -48,9 +48,6 @@ export default function LandingPage() {
             Start for free
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
-          <Link href="/main" className={styles.secondaryButton}>
-            Try the Demo
-          </Link>
         </div>
       </section>
 
