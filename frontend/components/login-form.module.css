@@ -1,8 +1,25 @@
 .page {
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1f;
+  --muted: #26262d;
+  --muted-foreground: #8b8b99;
+  --border: #2e2e38;
+  --destructive: #f87171;
+  --radius: 0.625rem;
+  --spacing-xs: 0.375rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --transition-fast: 150ms ease;
+
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  background-color: var(--background);
+  background-color: #0c0c0e;
   display: flex;
 }
 
@@ -296,7 +313,6 @@
   height: 1rem;
 }
 
-/* ── Footer ── */
 .footerText {
   margin-top: var(--spacing-lg);
   text-align: center;
