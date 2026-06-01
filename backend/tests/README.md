@@ -4,6 +4,17 @@ This folder contains unit tests and quality evaluation tests for the AI Task Bre
 
 ---
 
+### Install dependencies
+
+Before running tests, install development dependencies:
+
+```bash
+cd backend
+pip install -r requirements-dev.txt
+```
+
+---
+
 ## Running Tests
 
 All tests must be run from the `backend/` directory.  
